@@ -85,8 +85,93 @@ dados_vendas_limpos <- readr::read_rds(caminho_rds)
 dados_vendas_limpos |>
   filter(cidade =="Formiga")
 
+#filtra as vendas realizadas por um representante especifico 
+dados_vendas_limpos |>
+  filter(representante == "Representante 1")
+
+#filtra as vendas realizadas em Formiga por um representante especifico
+dados_vendas_limpos |>
+  filter(cidade == "Formiga" & representante == "Representante 1")
 
 
+#filtra as vendas realizadas em Formiga ou em Arcos com o operador |
+dados_vendas_limpos |> 
+  filter(cidade == "Formiga" | cidade =="Arcos")
+
+#filtra as mesmas vendas usando %in%, uma forma mas compacta
+#para multiplas comprações da mesma variavel
+dados_vendas_limpos |> 
+  filter(cidade %in% c("Formiga", "Arcos"))
+
+#salva o resultado em um novo objeto
+dados_vendas_formiga_arcos <- dados_vendas_limpos |> 
+  filter(cidade %in% c("Formiga", "Arcos"))
+
+#exibe o resultado
+dados_vendas_formiga_arcos
+
+
+
+# A FUNÇÃO SELECT ---------------------------------------------------------
+
+#seleciona apaenas as colunas cidade, produto e receita
+dados_vendas_limpos |> 
+  select(cidade, produto, receita)
+
+#remove as colunas representates e cidade
+dados_vendas_limpos |> 
+  select (-representante, -cidade)
+
+#salvando o resultado em um novo objeto
+dados_vendas_selecionados <- dados_vendas_limpos |> 
+  select(cidade, produto, receita)
+
+#exibe o resultado
+dados_vendas_selecionados
+
+
+
+# A FUNÇÃO MUTATE ---------------------------------------------------------
+
+#cria a variavel preco_desconto (10% sobre o preco_unitátio)
+dados_vendas_limpos |> 
+  mutate(preco_desconto = preco_unitario * 0.9)
+
+#cria a variavel receita_total
+dados_vendas_limpos |> 
+  mutate(receita_total = unidades * preco_unitario)
+
+#cria a variavel receita total, agrupa por cidade,
+#calcula a receita total por cidade e ordena o resultado
+dados_vendas_limpos |> 
+  mutate (receita_total = unidades * preco_unitario) |> 
+  group_by(cidade) |> 
+  summarise(receita_total_cidade = sum (receita_total)) |> 
+  arrange (desc(receita_total_cidade))
+  
+#cria a variavel categoria_receita
+dados_vendas_limpos |> 
+  mutate(categoria_receita = ifelse(receita > 1000, "Alta", "Baixa")) |> 
+  select(cidade, produto, categoria_receita)
+  
+  
+  
+#cria a variavel "categoria_receita" com multiplas categorias
+dados_vendas_limpos |> 
+  mutate(categoria_receita = case_when(
+    receita >1000 ~ "Alta",
+    receita > 500 & receita <= 1000 ~ "Média",
+    receita >0 & receita <= 500 ~"Baxa",
+    TRUE ~"Sem Receita"
+  )) |> 
+  select (cidade, produto, categoria_receita)
+  
+  
+  
+  
+  
+  
+  
 
 
 
