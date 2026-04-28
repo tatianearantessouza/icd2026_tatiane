@@ -19,7 +19,7 @@ library(tidyverse) # Inclui readr, dplyr, ggplot2, etc.
 library(here)      # Para gerenciamento de caminhos de arquivos
 library(janitor)   # Para limpeza de nomes de colunas (se necessário)
 
-
+  
 ## b)
 # A função here() localiza o arquivo a partir da raiz do projeto
 dados_marketing <- read_csv(here("dados", "brutos", "dados-marketing.csv"))
