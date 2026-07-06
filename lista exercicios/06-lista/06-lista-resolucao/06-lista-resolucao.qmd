@@ -1,0 +1,351 @@
+---
+lang: pt-BR
+title: "Resolução da Lista de Exercícios 6"
+author: "Tatiane Arantes"
+date: 16/06/26
+format:
+  html:
+    theme: flatly
+    embed-resources: true
+    toc: true
+execute:
+  eval: true
+  echo: true
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: setup
+
+# Exibe valores numéricos sem notação científica
+options(digits = 5, scipen = 999)
+
+# pacotes utilizados
+library(here)
+library(tidyverse)
+library(tidyplots)
+
+# Permite que os gráficos do tidyplots usem o espaço disponível no HTML
+tidyplots_options(width = NA, height = NA)
+
+# Importa o objeto dados_marketing_limpos.rds
+caminho_dados <- here("dados/limpos/dados_marketing_limpos.rds")
+dados_marketing <- read_rds(caminho_dados)
+```
+
+
+
+## Exercício 1
+
+
+**a.** resumo com medidas amostrais de centro 
+
+```{r}
+
+dados_marketing |> 
+  summarize(
+    #media amostral
+    media = mean(gasto_total),
+    
+    #mediana amostral
+  mediana = median(gasto_total)
+  )
+  
+
+```
+
+
+
+
+**b.**
+```{r}
+  #Resumo com medidas amostrais de variabilidade
+  
+dados_marketing |> 
+    summarize(
+     
+      #desvio padrao amostral
+      desvio_padrao =sd(gasto_total),
+      
+      #intervalo interquartil amostral
+      iqr = IQR(gasto_total)
+      )
+  
+```
+
+
+**c.**
+
+```{r}
+dados_marketing |>  
+  summarize(
+    #percentil 5
+    p5 = quantile(gasto_total, 0.05),
+    
+    #quartis amostrais
+    q1 = quantile(gasto_total, 0.25),
+    mediana = quantile(gasto_total, 0.50),
+    q3 = quantile(gasto_total, 0.75),
+  
+    #percentil 95 e maximo amostral
+    p95 = quantile(gasto_total, 0.95),
+  )  
+  
+```
+
+
+
+**d.** 
+```{r}
+#Valor Tipico*: a média (cerca de $ 113 mil) e a mediana
+#(aproximadamente $110 mil) do gasto total estão proximas. 
+#A média um pouco sugere influencia de algumas semanas com 
+#gasto mais alto.Para descrever o investimento semanal típico, 
+#a mediana é uma boa escolha, pois reepresenta o centro da distribuição 
+#dos dados é o menos afetada por valores 
+#muito altos ou baixos em relação à maioria dos dados. Como média e 
+#a mediana do gasto total estão proximas, usar o gasto total médio também seria 
+#aceitavel desde que a resposta mencionasse a leve influencia dos valores altos.
+
+#Dispersão (variabilidade)*: o intervalo interquartil é menor afetado 
+#por semanas de gasto nuito alto ou muito baixo, porque ele mede a distancia 
+#entre q1 e q3, ou seja, ele identifica a faixa onde está a metade intermediaria
+#das semanas, depois de ordenar os gastos do menor para o maior. 
+#já o desvio-padrãosa a distancia entre os gastos de todas as semanas em relação 
+#ao gasto médio, por isso, semanas com gasto muito alto 
+#ou muito baixo podem afetar bastante seu valor.
+
+#Semanas Atípicas*: pelo critério definido no enunciado, a faixa usual que
+#concentrra 90% das semanas vai de aproximadamente $ 84 mil (p5) 
+#a $ 152 mil (p95).Acima de $ 152 mil, a semana entra no grupo dos 5%
+#maiores gastos e merece atenção da equipe. Valores abaixo de $ 84 mil 
+#também ficam foram da Faixa usual, mas por gato muito baixo.
+
+```
+
+
+
+
+
+## Exercício 2
+
+
+```{r}
+# Dados sobre o desempenho semanal (R$ mil) de duas equipes de vendas
+desempenho_equipes <- tibble(
+  equipe = rep(c("A", "B"), each = 10),
+  desempenho = c(85, 92, 78, 110, 95, 105, 115, 98, 102, 250,
+                 120, 115, 125, 118, 122, 130, 115, 120, 125, 122)
+)
+```
+
+
+**a.** 
+
+```{r}
+
+
+#Resumo com medidas amostrais de variabilidade
+desempenho_equipes |> 
+  group_by(equipe) |>
+    summarize(
+       #desvio padrao amostral
+      desvio_padrao =sd(desempenho),
+      
+      #amplitude amostral
+      amplitude = max (desempenho) - min (desempenho),
+    
+      #coeficiente de variação.
+      CV = (sd (desempenho) / mean (desempenho)) * 100,
+     
+      
+      #intervalo interquartil amostral
+      iqr = IQR(desempenho)
+      
+    )
+  
+```
+
+
+
+**b.** 
+
+```{r}
+#Baseando-se estritamente nos resultados calculados no R, a Equipe B teve o 
+#desempenho muito mais consistente.
+
+#Para chegar a essa conclusão com segurança estatística, a melhor medida 
+#para se basear é o Coeficiente de Variação (CV)..
+
+#O valor 250 na Equipe A é um clássico outlier (um dado discrepante ou 
+#ponto fora da curva). Ele tem impactos completamente diferentes nas métricas, 
+#dependendo de como cada uma é calculada.
+
+# Não dá para afirmar com certeza absoluta que uma equipe é melhor que a outra. 
+#Dizer qual é "melhor" depende do que a empresa prioriza no momento: 
+#estabilidade ou potencial de pico.
+```
+
+
+
+
+## Exercício 3
+
+
+**a.** 
+
+```{r}
+#CALCULA O TAMANHO DA AMOSTRA -------------------------------------------
+n <- length(dados_marketing$receita_vendas)
+n
+
+
+# CALCULA O NÚMERO DE BINS PELA REGRA DE STURGES -------------------------
+k <-ceiling(1 + log2(n))
+k
+```
+
+
+
+```{r}
+
+# Construa um histograma com eixos nomeados, indicação da fonte dos dados e tamanho de letra legível.
+
+
+# Exibe o resumo calculado.
+#Gera o histograma da receita semanal
+dados_marketing |> 
+  tidyplot(x = gasto_total) |> 
+  add_histogram(bins = 9, fill = "steelblue") |> 
+  adjust_x_axis_title("Receita semanal de vendas (em UR$ mil)") |> 
+  adjust_y_axis_title("Numero de semanas") |> 
+  add_caption("Fonte: dados simulados pelo professor.") |> 
+  adjust_font(fontsize = 12)
+```
+
+
+**b.** 
+
+```{r}
+## 4. BOXPLOT DA RECEITA -
+dados_marketing |> 
+  tidyplot(y = gasto_total) |> 
+  add_boxplot()
+  
+```
+
+
+**c.**
+
+```{r}
+#O investimento semanal apresentou uma distribuição concentrada, 
+#com um gasto central (mediana) situado na faixa de US$ 45 mil a US$ 50 mil. 
+#O histograma revela uma leve assimetria à direita, indicando que, 
+#embora a maioria das semanas mantenha um patamar de investimento estável, 
+#existem esforços orçamentários pontuais que elevam o dispêndio acima da média habitual.
+
+#O boxplot reforça essa análise ao evidenciar a consistência da operação 
+#principal, mas sinaliza a existência de semanas atípicas na extremidade 
+#superior, representadas pelos pontos isolados acima de US$ 75 mil. 
+#Esses valores representam investimentos que fogem ao comportamento 
+#padrão de 1,5 vezes o intervalo interquartil, configurando-se como 
+#exceções estatísticas.
+```
+
+
+
+**d.**
+
+```{r}
+#Sim, o histograma e o boxplot contam a mesma história sob ângulos 
+#complementares: ambos revelam uma distribuição assimétrica à direita, 
+#onde a maior parte do investimento é constante, mas há um esforço 
+#orçamentário concentrado em picos esporádicos. Enquanto o histograma 
+#ilustra a "densidade" dessa frequência, o boxplot valida a existência 
+#de valores que se distanciam estatisticamente do comportamento habitual, 
+#conferindo rigor técnico ao que o histograma apenas sugere visualmente.
+```
+
+
+
+## Exercício 4
+
+
+**a.**
+
+```{r}
+# BOXPLOT COMPARATIVO 
+dados_marketing |> 
+  tidyplot(x = receita_vendas, y = status_concorrencia) |> 
+  add_boxplot()
+```
+
+
+
+**b.** 
+
+```{r}
+#Resumo com medidas amostrais de variabilidade
+resumo_equipes <- desempenho_equipes |> 
+  group_by(equipe) |>
+    summarize(
+      n = n(),
+      media = mean(desempenho),
+      mediana = median(desempenho),
+      cv = sd(desempenho) / mean(desempenho) * 100
+    )
+
+#Exibe o resumo calculado
+resumo_equipes
+ 
+    
+```
+
+
+
+**c.**
+
+```{r}
+#a diferença de desempenho entre as equipes é perceptível, mas não é absoluta 
+#devido à alta sobreposição dos resultados semanais. A recomendação estratégica
+#é que o foco de gestão no próximo trimestre não seja apenas elevar a média do 
+#Grupo B, mas sim reduzir a sua variabilidade (diminuir o CV), 
+#alinhando a previsibilidade de entregas deste grupo à consistência 
+#já demonstrada pelo Grupo A.
+```
+
+
+
+**d.**
+
+```{r}
+#Não. A análise exploratória (histogramas, boxplots e resumos estatísticos) 
+#permite identificar associações ou correlações, mas jamais estabelecer 
+#uma relação de causalidade.
+
+#Para determinar se a diferença entre os grupos é "grande" ou "pequena", 
+#não devemos olhar apenas para a diferença entre as médias ou medianas 
+#(o deslocamento), mas sim colocar essa diferença em proporção à variabilidade.
+```
+
+
+
+```{r}
+
+desempenho_equipes |> count(equipe)
+
+# Estatisticamente equilibrada. Isso é um ponto positivo, pois elimina
+#o risco de distorção por uma amostra significativamente maior em um dos lados.
+```
+
+```{r}
+#Como a análise é exploratória, é fundamental reconhecer que a atividade do
+#concorrente raramente ocorre em um vácuo; ela geralmente é uma resposta 
+#a movimentos mais amplos do mercado.
+
+#Um fator crucial que pode variar junto com a atividade do concorrente e 
+#impactar diretamente a sua receita é a Sazonalidade de Demanda 
+#(Ciclos de Mercado).
+```
+

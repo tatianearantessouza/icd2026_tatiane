@@ -1,0 +1,186 @@
+---
+title: "Resolução da Avaliação 3 (34 pontos)"
+subtitle: "Introdução à Ciência de Dados <br> Bacharelado em Administração"
+lang: pt-BR
+author: 
+- nome da integrante 1
+- nome da integrante 2
+- nome da integrante 3
+- nome da integrante 4
+date: "2026-07-06"
+title-block-banner: "#27445C"
+format:
+  html:
+    embed-resources: true
+    toc: true
+    toc-depth: 2
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: setup
+#| echo: false
+#| include: false
+
+# não exibe números em notação científica
+options(digits = 5, scipen = 999)
+
+# pacotes utilizados
+library(here)
+library(tidyverse)
+library(tidyplots)
+
+# Permite que os gráficos do tidyplots usem o espaço disponível
+tidyplots_options(width = NA, height = NA)
+
+# Guarda o caminho do arquivo CSV dentro do projeto RStudio
+caminho_dados <- here("dados/brutos/belezar_vendas_diarias.csv")
+
+# Lê o arquivo CSV e cria o objeto dados_belezar
+dados_belezar <- read_csv(caminho_dados)
+```
+
+
+
+# Questão 1 
+
+
+**a)** 
+
+
+
+**b)**
+
+
+
+**c)**
+
+
+
+
+# Questão 2
+
+**a)** 
+
+
+
+**b)**
+
+
+
+
+# Questão 3
+
+
+**a)** 
+
+
+
+**b)**
+
+
+
+
+# Questão 4
+
+
+A. [ ]
+
+ 
+B. [ ]
+
+
+C. [ ]
+
+
+D. [ ]
+
+
+
+
+# Questão 5
+
+
+A. [ ]
+
+ 
+B. [ ]
+
+
+C. [ ]
+
+
+D. [ ]
+
+
+
+
+# Questão 6
+
+
+A. [ ]
+
+ 
+B. [ ]
+
+
+C. [ ]
+
+
+D. [ ]
+
+
+
+
+# Questão 7
+
+
+A. [ ]
+
+ 
+B. [ ]
+
+
+C. [ ]
+
+
+D. [ ]
+
+
+
+
+# Questão 8
+
+
+
+A. [ ]
+
+ 
+B. [ ]
+
+
+C. [ ]
+
+
+D. [ ]
+
+
+
+
+# Questão 9
+
+
+
+A. [ ]
+
+ 
+B. [ ]
+
+
+C. [ ]
+
+
+D. [ ]

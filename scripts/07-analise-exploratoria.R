@@ -85,3 +85,45 @@ centro_receita <- dados_marketing |>
     mediana = median(receita_vendas)
   )
 centro_receita
+
+
+# 6. Variabilidade da receita ---------------------------------------------
+
+#Resumo com medidas amostrais de variabilidade
+estatisticas_variabilidade <- dados_marketing |> 
+  summarize(
+    #amplitude amostral
+    amplitude = max (receita_vendas) - min (receita_vendas),
+    
+    #variancia amostral
+    variancia = var(receita_vendas),
+    
+    #desvio padrao amostral
+    desvio_padrao =sd(receita_vendas),
+    
+    #intervalo interquartil amostral
+    iqr = IQR(receita_vendas)
+    
+  )
+
+#exibe o resumo calculado
+estatisticas_variabilidade
+
+
+# 7. Coeficiente de variação ----------------------------------------------
+
+#Resumo com média, desvio-padrão e CV amostrais
+cv_receita <- dados_marketing |> 
+  summarize(
+    #media amostral
+    media = mean(receita_vendas),
+    
+    #desvio-padrão amostral
+    desvio_padrao = sd(receita_vendas),
+    
+    #cv amostral percentual
+    cv_percentual = 100 * desvio_padrao / media
+  )
+
+#exibe o coeficiente de variação
+cv_receita

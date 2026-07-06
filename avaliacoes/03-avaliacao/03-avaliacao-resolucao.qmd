@@ -1,0 +1,215 @@
+---
+title: "Resolução da Avaliação 3 (34 pontos)"
+subtitle: "Introdução à Ciência de Dados <br> Bacharelado em Administração"
+lang: pt-BR
+author: 
+- Eunice
+- Gislane
+- Jennifer
+- Tatiane
+date: "2026-07-06"
+title-block-banner: "#27445C"
+format:
+  html:
+    embed-resources: true
+    toc: true
+    toc-depth: 2
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: setup
+#| echo: false
+#| include: false
+
+# não exibe números em notação científica
+options(digits = 5, scipen = 999)
+
+# pacotes utilizados
+library(here)
+library(tidyverse)
+library(tidyplots)
+
+# Permite que os gráficos do tidyplots usem o espaço disponível
+tidyplots_options(width = NA, height = NA)
+
+# Guarda o caminho do arquivo CSV dentro do projeto RStudio
+caminho_dados <- here("dados/brutos/belezar_vendas_diarias.csv")
+
+# Lê o arquivo CSV e cria o objeto dados_belezar
+dados_belezar <- read_csv(caminho_dados)
+```
+
+
+
+# Questão 1 
+
+
+**a)** 
+
+```{r}
+
+dados_belezar |> 
+  summarise(
+    media = mean(receita, na.rm = TRUE),
+    mediana = median(receita, na.rm = TRUE),
+    desvio_padrao = sd(receita, na.rm = TRUE),
+    q1 = quantile(receita, probs = 0.25, na.rm = TRUE),
+    q3 = quantile(receita, probs = 0.75, na.rm = TRUE),
+    p90 = quantile(receita, probs = 0.90, na.rm = TRUE)
+  )
+
+```
+
+
+**b)**
+
+```{r}
+#A mediana descreve melhor.Como a média é altamente sensível a esses 
+#valores extremos e acaba sendo "puxada" para cima, ela distorce a realidade
+#de um dia comum. Portanto, a mediana é a melhor escolha para representar 
+#o dia a dia típico da empresa, pois ela não é afetada por esses picos 
+#isolados de faturamento e mostra o valor exato que divide os dias em 
+#$50%$ acima e $50%$ abaixo daquela receita.
+#A receita média foi de 10.274, assim a mediana foi de 8.9.
+#Desta forma indica que a média é maior que a mediana, pois 
+#a distribuição assimétrica é positiva. 
+#O desvio padrão foi de 6.0064 revela uma dispersão considerável 
+#em torno da média. Sendo assim, 25% das receitas (q1) 
+#estão a 6.8, ainda sim 75% (q3) estão com 11.8 e apenas 10% das receitas 
+#ultrapassam 16.08 (P90).
+
+```
+
+
+**c)**
+
+```{r}
+#O percentil 90 de R$ 16.08 indica que, 
+#em 90% dos dias do ano, o faturamento diário da nossa empresa foi 
+#igual ou inferior a esse valor, o que significa que 
+#apenas nos 10% dos dias mais lucrativos conseguimos superar essa marca.
+```
+
+
+
+# Questão 2
+
+**a)** 
+
+```{r}
+dados_belezar |> 
+  tidyplot(x = receita) |> 
+  add_histogram(bins = 10, fill = "steelblue") |> 
+  adjust_x_axis_title("receita do dia, em R$ mil (milhares de reais)") |> 
+  adjust_y_axis_title("número de pedidos recebidos no dia") |> 
+  add_caption("Fonte: dados simulados pelo professor.") |> 
+  adjust_font(fontsize = 14)
+```
+
+
+**b)**
+```{r}
+#O boxplot indica que a receita do dia a apresentou um distribuição 
+#aproximadamente simetrica, com leve assimétrica à direita. 
+#A Receita, representado pela mediana, ficou  em torno de US$ 200 mil.
+#Cerca de 20 dias aparecem destacadas no boxplot com valores extremos 
+#(ou outliers) muito maiores do que o observado na maioria das semanas. 
+#Essas semanas com receita muito altas são coerentes com o que o histogramma 
+#mostra: existem poucas semanas com receitas muito acima do típico.
+#o histograma e o boxplot contam a mesma historia: a receita do dia está 
+#concetrado emm torno de US$ 200 mil, com algumas semanas apresentando 
+#receita maior que provocam alguma assimetria positiva na distribuição.
+#
+```
+
+
+# Questão 3
+
+
+**a)** 
+
+```{r}
+dados_belezar |>
+  tidyplot(x = status_promocao, y = receita, color = status_promocao) |>
+  add_boxplot() |>
+  adjust_x_axis_title("Status da Promoção") |>
+  adjust_y_axis_title("Receita Diária") |>
+  add_caption("Fonte: Dados do professor") |>
+  adjust_font(fontsize = 14)
+```
+
+
+**b)**
+
+```{r}
+# As semana com promoção apresentam valores maiores do que sem promoção.
+#Os Boxplots mostram forte sobreposição entre os dois grupos.
+#Indicando que muitas semanas com promoção tiveram receitas semelhantes as semanas com promoção.
+
+```
+
+
+
+# Questão 4
+
+```{r}
+#C. [X ] Em aproximadamente 25% dos dias do ano, o faturamento #diário da 
+#loja foi menor ou igual a R$ 30 mil.
+```
+
+
+
+# Questão 5
+
+```{r}
+#B. [x ] A média tende a ser menor que a mediana, pois é puxada #pelos valores 
+#baixos da cauda esquerda da distribuição.
+
+ 
+```
+
+
+
+# Questão 6
+
+```{r}
+#D. [X ] Valores extremos (ou outliers) segundo a regra usada no boxplot; 
+#devem ser investigados antes de qualquer decisão de tratamento 
+#e podem refletir eventos legítimos do negócio, como a Black Friday.
+```
+
+
+
+# Questão 7
+
+```{r}
+#B. [X ] Há uma associação entre promoção e receita mais alta; afirmar que
+#a promoção causa o aumento exigiria uma análise adicional.
+```
+
+
+
+# Questão 8
+
+
+```{r}
+#A. [x] A série apresenta tendência de crescimento ao longo do período, 
+#com picos recorrentes destacados em novembro, 
+#um padrão sazonal associado à Black Friday.
+```
+
+
+
+# Questão 9
+
+
+```{r}
+#C. [x ] Irregular, pois as flutuações sazonais são recorrentes (novembro), 
+#mas ocorrem com intensidade que varia de um ano para outro.
+```
+
+
